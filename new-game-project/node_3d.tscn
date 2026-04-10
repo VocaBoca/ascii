@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://n3reo1pigugx" path="res://mesh_instance_3d_2.gd" id="1_a0tk4"]
 [ext_resource type="Shader" uid="uid://d2hyrv34invfm" path="res://asciiTest.gdshader" id="1_a202f"]
-[ext_resource type="Texture2D" uid="uid://c4g3mnfat8jck" path="res://textures/qwterAST5.png" id="2_wc5p8"]
+[ext_resource type="Texture2D" uid="uid://hchw2aov4j04" path="res://textures/qwterAST6.png" id="2_wc5p8"]
 [ext_resource type="Script" uid="uid://d2lck71voytmp" path="res://color_rect.gd" id="3_i5arm"]
 [ext_resource type="Script" uid="uid://bxxulom01f5x5" path="res://mesh_instance_3d_5.gd" id="3_jka67"]
 [ext_resource type="Texture2D" uid="uid://ce1wphrly7t7" path="res://textures/b31ee3988b009d32478769af874f8a4d-2020628799.jpg" id="5_wc5p8"]
@@ -26,7 +26,7 @@ shader_parameter/atlas_mapping_power = 1.00000004424012
 shader_parameter/atlas_mapping_bias = 4.7499999933364734e-08
 shader_parameter/invert_ramp = false
 shader_parameter/min_cell_fill = 0.14400000684
-shader_parameter/bg_strength = 0.05200000247
+shader_parameter/bg_strength = 0.0
 shader_parameter/color_boost = 1.0000000475
 
 [sub_resource type="QuadMesh" id="QuadMesh_noarx"]
@@ -89,7 +89,7 @@ transform = Transform3D(50, 0, 0, 0, -2.1855694e-06, 50, 0, -50, -2.1855694e-06,
 mesh = SubResource("QuadMesh_noarx")
 
 [node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport2/Node3D" unique_id=1442512217]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.896264, 0)
 mesh = SubResource("BoxMesh_a0tk4")
 surface_material_override/0 = SubResource("StandardMaterial3D_a202f")
 script = ExtResource("1_a0tk4")
