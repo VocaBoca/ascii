@@ -1,0 +1,5 @@
+res://node_3d.tscn
+res://camera_3d.gd
+res://node_3d.gd
+res://CameraTestSubViewport.gd
+res://Node3dMain.gd

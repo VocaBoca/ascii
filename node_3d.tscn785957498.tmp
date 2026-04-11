@@ -1,0 +1,131 @@
+[gd_scene format=3 uid="uid://mgp02mkor0at"]
+
+[ext_resource type="Script" uid="uid://n3reo1pigugx" path="res://mesh_instance_3d_2.gd" id="1_a0tk4"]
+[ext_resource type="Shader" uid="uid://d2hyrv34invfm" path="res://asciiTest.gdshader" id="1_a202f"]
+[ext_resource type="Texture2D" uid="uid://hchw2aov4j04" path="res://textures/qwterAST6.png" id="2_wc5p8"]
+[ext_resource type="Script" uid="uid://d2lck71voytmp" path="res://color_rect.gd" id="3_i5arm"]
+[ext_resource type="Script" uid="uid://bxxulom01f5x5" path="res://mesh_instance_3d_5.gd" id="3_jka67"]
+[ext_resource type="Script" uid="uid://bakqlkmte46gt" path="res://camera_3d.gd" id="4_jsk3o"]
+[ext_resource type="Texture2D" uid="uid://ce1wphrly7t7" path="res://textures/b31ee3988b009d32478769af874f8a4d-2020628799.jpg" id="5_wc5p8"]
+[ext_resource type="Texture2D" uid="uid://c8dm47qmxdvs" path="res://textures/calibration_tex4x4.png" id="7_jsk3o"]
+
+[sub_resource type="Environment" id="Environment_a202f"]
+background_mode = 3
+background_energy_multiplier = 0.0
+background_canvas_max_layer = 1
+glow_enabled = true
+glow_intensity = 0.0
+glow_bloom = 0.81
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a202f"]
+shader = ExtResource("1_a202f")
+shader_parameter/ascii_atlas = ExtResource("2_wc5p8")
+shader_parameter/cell_size = 12.00000038
+shader_parameter/atlas_grid = Vector2(8, 8)
+shader_parameter/glyph_count = 64.0
+shader_parameter/atlas_mapping_power = 1.00000004424012
+shader_parameter/atlas_mapping_bias = 4.7499999933364734e-08
+shader_parameter/invert_ramp = false
+shader_parameter/min_cell_fill = 0.14400000684
+shader_parameter/bg_strength = 0.0
+shader_parameter/color_boost = 1.0000000475
+
+[sub_resource type="QuadMesh" id="QuadMesh_noarx"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_a0tk4"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a202f"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_r3fl7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_noarx"]
+albedo_color = Color(0.18366669, 0.58, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_jka67"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jka67"]
+transparency = 1
+albedo_texture = ExtResource("5_wc5p8")
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_operator = 1
+emission_texture = ExtResource("5_wc5p8")
+
+[sub_resource type="QuadMesh" id="QuadMesh_jsk3o"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4arys"]
+shading_mode = 0
+albedo_texture = ExtResource("7_jsk3o")
+
+[node name="Node3D" type="Node3D" unique_id=970611339]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1074253570]
+environment = SubResource("Environment_a202f")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=740658631]
+follow_viewport_enabled = true
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1158010626 node_paths=PackedStringArray("viewport")]
+material = SubResource("ShaderMaterial_a202f")
+offset_left = -16.0
+offset_top = -10.0
+offset_right = 1921.0
+offset_bottom = 1079.0
+script = ExtResource("3_i5arm")
+viewport = NodePath("../../SubViewport2")
+
+[node name="SubViewport2" type="SubViewport" parent="." unique_id=1250877746]
+transparent_bg = true
+size = Vector2i(1920, 1080)
+
+[node name="Node3D" type="Node3D" parent="SubViewport2" unique_id=643576163]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport2/Node3D" unique_id=168617867]
+transform = Transform3D(50, 0, 0, 0, -2.1855694e-06, 50, 0, -50, -2.1855694e-06, 0, 0, 0)
+mesh = SubResource("QuadMesh_noarx")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport2/Node3D" unique_id=1442512217]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.896264, 0)
+mesh = SubResource("BoxMesh_a0tk4")
+surface_material_override/0 = SubResource("StandardMaterial3D_a202f")
+script = ExtResource("1_a0tk4")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="SubViewport2/Node3D" unique_id=2119729201]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7367721, 0.82, 0)
+mesh = SubResource("CapsuleMesh_r3fl7")
+surface_material_override/0 = SubResource("StandardMaterial3D_noarx")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="SubViewport2/Node3D" unique_id=2036162896]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5145267, 0.48955917, 0)
+mesh = SubResource("SphereMesh_jka67")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="SubViewport2/Node3D" unique_id=767426825]
+transform = Transform3D(1.8679602, 0.110585585, -0.33978215, 0.07463924, 0.91551596, 0.40054682, 0.7107414, -0.3867833, 0.85094666, -0.574, 1.16, 0.9040104)
+material_override = SubResource("StandardMaterial3D_jka67")
+mesh = SubResource("QuadMesh_noarx")
+script = ExtResource("3_jka67")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="SubViewport2/Node3D/MeshInstance3D5" unique_id=1115682559]
+transform = Transform3D(1.8679602, 0.110585585, -0.33978215, 0.07463924, 0.91551596, 0.40054682, 0.7107414, -0.3867833, 0.85094666, -0.574, 1.16, 0.9040104)
+material_override = SubResource("StandardMaterial3D_jka67")
+mesh = SubResource("QuadMesh_noarx")
+script = ExtResource("3_jka67")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="SubViewport2/Node3D" unique_id=712231281]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8604609, 4.6979785, 2.6843457)
+light_energy = 4.907
+light_indirect_energy = 0.882
+light_volumetric_fog_energy = 0.0
+light_specular = 0.0
+omni_range = 13.1
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="SubViewport2/Node3D" unique_id=311792291]
+transform = Transform3D(0.9339801, 0.013823198, -0.33978215, 0.03731962, 0.114439495, 0.40054682, 0.3553707, -0.048347913, 0.85094666, -0.574, 0.725, 1.15)
+mesh = SubResource("QuadMesh_jsk3o")
+surface_material_override/0 = SubResource("StandardMaterial3D_4arys")
+
+[node name="Camera3D" type="Camera3D" parent="SubViewport2/Node3D" unique_id=1959781957]
+transform = Transform3D(0.9339801, 0.11058561, -0.33978224, 0.037319615, 0.915516, 0.40054682, 0.35537076, -0.38678327, 0.8509468, -0.77312034, 1.4533522, 1.8540852)
+current = true
+script = ExtResource("4_jsk3o")
