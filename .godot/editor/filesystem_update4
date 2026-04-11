@@ -1,3 +1,4 @@
-res://node_3d.tscn
-res://Shaders/asciiTest.gdshader
-res://TestScene.tscn
+res://Shaders/ASCII_main.gdshader
+res://level_test_scene.tscn
+res://Scripts/CameraTestMovement.gd
+res://Scripts/Jumpscare.gd

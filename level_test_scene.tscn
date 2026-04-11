@@ -1,0 +1,116 @@
+[gd_scene format=3 uid="uid://cvgq6xihovhs2"]
+
+[ext_resource type="Script" uid="uid://f8k8y1ivfqh0" path="res://Scripts/CameraTestMovement.gd" id="1_8hbb6"]
+[ext_resource type="Shader" uid="uid://d2hyrv34invfm" path="res://Shaders/ASCII_main.gdshader" id="2_x0c6s"]
+[ext_resource type="Texture2D" uid="uid://cadstupcq0n4v" path="res://Textures/36aace9b44843519c1407732ce06818b.jpg" id="3_hgkj1"]
+[ext_resource type="Texture2D" uid="uid://tll8kbevgpbn" path="res://Textures/Atlas5.png" id="3_x0c6s"]
+[ext_resource type="Script" uid="uid://d2lck71voytmp" path="res://Scripts/Color_Rect_Debug_Script.gd" id="4_4fyl6"]
+
+[sub_resource type="Environment" id="Environment_fkw4m"]
+background_mode = 3
+background_energy_multiplier = 0.0
+background_canvas_max_layer = 1
+glow_enabled = true
+glow_intensity = 1.0
+glow_bloom = 0.27
+glow_hdr_scale = 2.35
+
+[sub_resource type="QuadMesh" id="QuadMesh_g8ngl"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kmb7y"]
+albedo_color = Color(0.19793725, 0.19793722, 0.19793722, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sfm0x"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wkxdq"]
+cull_mode = 1
+albedo_color = Color(0.25056624, 0.028849611, 0.047922015, 1)
+
+[sub_resource type="TorusMesh" id="TorusMesh_kmb7y"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8hbb6"]
+emission_enabled = true
+emission = Color(0, 1, 0, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_x0c6s"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hgkj1"]
+albedo_texture = ExtResource("3_hgkj1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_33wto"]
+shader = ExtResource("2_x0c6s")
+shader_parameter/ascii_atlas = ExtResource("3_x0c6s")
+shader_parameter/cell_size = 10.000000284999999
+shader_parameter/atlas_grid = Vector2(8, 6)
+shader_parameter/glyph_count = 48.0
+shader_parameter/atlas_mapping_power = 1.00000004424012
+shader_parameter/atlas_mapping_bias = 4.7499999933364734e-08
+shader_parameter/invert_ramp = false
+shader_parameter/min_cell_fill = 0.0
+shader_parameter/bg_strength = 0.0
+shader_parameter/color_boost = 1.0000000475
+
+[node name="LevelTestScene" type="Node3D" unique_id=70158495]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=930120835]
+environment = SubResource("Environment_fkw4m")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=302337459]
+transparent_bg = true
+size = Vector2i(1920, 1080)
+
+[node name="Floor" type="MeshInstance3D" parent="SubViewport" unique_id=50778675]
+transform = Transform3D(50, 0, 0, 0, -2.1855694e-06, 50, 0, -50, -2.1855694e-06, 0, 0, 0)
+mesh = SubResource("QuadMesh_g8ngl")
+surface_material_override/0 = SubResource("StandardMaterial3D_kmb7y")
+
+[node name="RedBox" type="MeshInstance3D" parent="SubViewport" unique_id=1054889241]
+transform = Transform3D(6.3, 0, 0, 0, 6.3, 0, 0, 0, 6.3, 0, 3.0985978, 0)
+mesh = SubResource("BoxMesh_sfm0x")
+surface_material_override/0 = SubResource("StandardMaterial3D_wkxdq")
+
+[node name="PointLight" type="OmniLight3D" parent="SubViewport" unique_id=1768200106]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8604609, 4.6979785, 2.427878)
+visible = false
+light_energy = 4.907
+light_indirect_energy = 0.882
+light_volumetric_fog_energy = 0.0
+light_specular = 0.0
+omni_range = 13.1
+
+[node name="Camera3D" type="Camera3D" parent="SubViewport" unique_id=455648085]
+transform = Transform3D(0.9834776, -0.13812178, 0.11702215, 0.030697668, 0.7643052, 0.6441236, -0.17840813, -0.6298889, 0.7559171, 0.19182086, 3.974392, 3.1100209)
+current = true
+script = ExtResource("1_8hbb6")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport" unique_id=59155390]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6770865, 0)
+mesh = SubResource("TorusMesh_kmb7y")
+surface_material_override/0 = SubResource("StandardMaterial3D_8hbb6")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="SubViewport" unique_id=326833247]
+transform = Transform3D(1, 0, 0, 0, 0.25881907, 0.9659258, 0, -0.9659258, 0.25881907, 2.1911795, 6.2704005, 2.9752543)
+light_energy = 13.917
+spot_range = 15.477
+spot_angle = 75.86
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport" unique_id=1891808082]
+transform = Transform3D(0.46099934, 0.09033446, 0.07031572, -0.003706818, 0.30339208, -0.36546478, -0.11441536, 0.35414395, 0.2951545, -1.3592227, 3.4580095, 1.972)
+mesh = SubResource("PlaneMesh_x0c6s")
+surface_material_override/0 = SubResource("StandardMaterial3D_hgkj1")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=635638733]
+follow_viewport_enabled = true
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1732385938 node_paths=PackedStringArray("viewport")]
+material = SubResource("ShaderMaterial_33wto")
+anchors_preset = -1
+anchor_right = 0.003125
+anchor_bottom = 0.008333334
+offset_left = -16.0
+offset_top = -10.0
+offset_right = 1921.0
+offset_bottom = 1079.0
+script = ExtResource("4_4fyl6")
+viewport = NodePath("../../SubViewport")
+metadata/_edit_use_anchors_ = true
