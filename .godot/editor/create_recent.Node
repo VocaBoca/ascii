@@ -1,6 +1,7 @@
-Sprite2D
+Node3D
 MeshInstance3D
+NavigationRegion3D
+Sprite2D
 DirectionalLight3D
 SpotLight3D
-Node3D
 Node

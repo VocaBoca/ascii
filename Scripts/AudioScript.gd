@@ -20,7 +20,7 @@ func _process(delta: float) -> void:
 
 func _on_console_window_console_key_pressed() -> void:
 	stream = keysounds.pick_random()
-	pitch_scale = 0.8
+	pitch_scale = randf_range(0.75, 0.85)
 	play()
 	pass # Replace with function body.
 

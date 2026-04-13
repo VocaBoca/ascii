@@ -2,14 +2,18 @@
 
 [ext_resource type="Script" uid="uid://dnrdhm2n03uvc" path="res://Scripts/LevelTestScene.gd" id="1_4fyl6"]
 [ext_resource type="Script" uid="uid://f8k8y1ivfqh0" path="res://Scripts/CameraTestMovement.gd" id="1_8hbb6"]
+[ext_resource type="Script" uid="uid://dbgy1haj2ptfl" path="res://Scripts/Movement/PathManager.gd" id="2_2afu8"]
 [ext_resource type="Shader" uid="uid://d2hyrv34invfm" path="res://Shaders/ASCII_main.gdshader" id="2_x0c6s"]
 [ext_resource type="Texture2D" uid="uid://cadstupcq0n4v" path="res://Textures/36aace9b44843519c1407732ce06818b.jpg" id="3_hgkj1"]
 [ext_resource type="Texture2D" uid="uid://tll8kbevgpbn" path="res://Textures/Atlas5.png" id="3_x0c6s"]
 [ext_resource type="Script" uid="uid://d2lck71voytmp" path="res://Scripts/Color_Rect_Debug_Script.gd" id="4_4fyl6"]
 [ext_resource type="ArrayMesh" uid="uid://fpwa65lgb7oo" path="res://Models/TestModel.obj" id="4_fkw4m"]
-[ext_resource type="Script" uid="uid://c13v6a6co0t4g" path="res://Scripts/ConsoleWindow.gd" id="7_fkw4m"]
+[ext_resource type="Script" uid="uid://bwknvqdn2lx54" path="res://Scripts/Movement/MoveToPoint.gd" id="5_mq78g"]
+[ext_resource type="Script" uid="uid://1fad2bure42j" path="res://Scripts/Movement/PointOfInterest.gd" id="7_cmw0u"]
+[ext_resource type="Script" uid="uid://bu5fxo757cgke" path="res://Scripts/Movement/LocationManager.gd" id="8_cjqk3"]
 [ext_resource type="Texture2D" uid="uid://ce1wphrly7t7" path="res://Textures/AAAAAAAAAAAAA.jpg" id="9_2afu8"]
 [ext_resource type="Script" uid="uid://dhsgm3awkj1ja" path="res://Animations.gd" id="9_g8ngl"]
+[ext_resource type="Script" uid="uid://o4fw5xv1f8mv" path="res://Scripts/ConsoleWindow2Test.gd" id="10_33wto"]
 [ext_resource type="Script" uid="uid://c7wffkatnh7l6" path="res://Scripts/ScreamerBaby.gd" id="10_mq78g"]
 [ext_resource type="Script" uid="uid://be6amaw01dx6h" path="res://Scripts/AudioScript.gd" id="12_33wto"]
 
@@ -52,6 +56,14 @@ albedo_color = Color(0.55145144, 0.33066234, 0.979412, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fkw4m"]
 albedo_color = Color(9.62615e-08, 0.77621925, 0.7358226, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_cjqk3"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_33wto"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_cjqk3"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_y8n5w"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_33wto"]
 shader = ExtResource("2_x0c6s")
@@ -177,6 +189,10 @@ transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1600, 900)
 render_target_update_mode = 4
+script = ExtResource("2_2afu8")
+terminal_path = NodePath("../Terminal/ConsoleWindow")
+player_path = NodePath("TestPlayer")
+location_manager_path = NodePath("Routes/LocationManager")
 
 [node name="Floor" type="MeshInstance3D" parent="SubViewport" unique_id=50778675]
 transform = Transform3D(50, 0, 0, 0, -2.1855694e-06, 50, 0, -50, -2.1855694e-06, 0, 0, 0)
@@ -185,6 +201,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_kmb7y")
 
 [node name="RedBox" type="MeshInstance3D" parent="SubViewport" unique_id=1054889241]
 transform = Transform3D(6.3, 0, 0, 0, 6.3, 0, 0, 0, 6.3, 0, 1.5157359, 0)
+visible = false
 mesh = SubResource("BoxMesh_sfm0x")
 surface_material_override/0 = SubResource("StandardMaterial3D_wkxdq")
 
@@ -197,10 +214,11 @@ light_volumetric_fog_energy = 0.0
 light_specular = 0.0
 omni_range = 13.1
 
-[node name="Camera3D" type="Camera3D" parent="SubViewport" unique_id=455648085]
+[node name="Camera3D" type="Camera3D" parent="SubViewport" unique_id=455648085 node_paths=PackedStringArray("target")]
 transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0.19182086, 3.1493394, 3.1100209)
 current = true
 script = ExtResource("1_8hbb6")
+target = NodePath("../TestPlayer")
 
 [node name="BabelEmissionTest" type="MeshInstance3D" parent="SubViewport" unique_id=59155390]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6770865, 0)
@@ -223,15 +241,75 @@ mesh = SubResource("PlaneMesh_x0c6s")
 surface_material_override/0 = SubResource("StandardMaterial3D_hgkj1")
 
 [node name="TestPlayer" type="CharacterBody3D" parent="SubViewport" unique_id=1521667753]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4202616, 0, -2.443655)
+script = ExtResource("5_mq78g")
+move_speed = 2.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewport/TestPlayer" unique_id=1607148197]
 shape = SubResource("CapsuleShape3D_g8ngl")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/TestPlayer" unique_id=1715825048]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, -2.2068825)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 mesh = ExtResource("4_fkw4m")
 surface_material_override/0 = SubResource("StandardMaterial3D_sfm0x")
 surface_material_override/1 = SubResource("StandardMaterial3D_fkw4m")
+
+[node name="FacingCheck" type="MeshInstance3D" parent="SubViewport/TestPlayer" unique_id=1837686046]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0.54679143, 0.38810992)
+mesh = SubResource("SphereMesh_cjqk3")
+
+[node name="Routes" type="Node3D" parent="SubViewport" unique_id=1110957884]
+
+[node name="pointofinterest4" type="Node3D" parent="SubViewport/Routes" unique_id=308234318]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.995356, 0, -2.9630547)
+script = ExtResource("7_cmw0u")
+location_id = "nahui"
+display_name = "cube2"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/Routes/pointofinterest4" unique_id=561153202]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.25, 0)
+mesh = SubResource("BoxMesh_33wto")
+
+[node name="pointofinterest3" type="Node3D" parent="SubViewport/Routes" unique_id=2021836520]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.26621872, 4.7683716e-07, -2.7093432)
+script = ExtResource("7_cmw0u")
+location_id = "kok"
+display_name = "kok"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/Routes/pointofinterest3" unique_id=952016167]
+transform = Transform3D(0.5, 0, 0, 0, 1.575, 0, 0, 0, 0.5, 0, 1.2855053, 0)
+mesh = SubResource("CapsuleMesh_cjqk3")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="SubViewport/Routes/pointofinterest3" unique_id=1185143062]
+transform = Transform3D(0.452, 0, 0, 0, 0.452, 0, 0, 0, 0.452, -0.3148309, 0.1760682, 0.17758417)
+mesh = SubResource("SphereMesh_y8n5w")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="SubViewport/Routes/pointofinterest3" unique_id=508438276]
+transform = Transform3D(0.475, 0, 0, 0, 0.475, 0, 0, 0, 0.475, 0.29569495, 0.119368196, 0.07822204)
+mesh = SubResource("SphereMesh_y8n5w")
+
+[node name="pointofinterest2" type="Node3D" parent="SubViewport/Routes" unique_id=833003178]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3300197, 0, 0.14767528)
+script = ExtResource("7_cmw0u")
+location_id = "cube2"
+display_name = "cube2"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/Routes/pointofinterest2" unique_id=234150487]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.25, 0)
+mesh = SubResource("BoxMesh_33wto")
+
+[node name="pointofinterest1" type="Node3D" parent="SubViewport/Routes" unique_id=835686095]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6175753, 0, 0.9893477)
+script = ExtResource("7_cmw0u")
+location_id = "CUBE1"
+display_name = "cube1"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/Routes/pointofinterest1" unique_id=1683204581]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0.25, 0)
+mesh = SubResource("BoxMesh_33wto")
+
+[node name="LocationManager" type="Node3D" parent="SubViewport/Routes" unique_id=999556260]
+script = ExtResource("8_cjqk3")
 
 [node name="Ascii3D" type="CanvasLayer" parent="." unique_id=635638733]
 follow_viewport_enabled = true
@@ -261,8 +339,8 @@ offset_left = 1000.0
 offset_right = 1600.0
 offset_bottom = 900.0
 color = Color(0, 0, 0, 1)
-script = ExtResource("7_fkw4m")
-FONT_SIZE = 12
+script = ExtResource("10_33wto")
+ERROR_COLOR = Color(1, 0.2509804, 0.2509804, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1189118204]
 libraries/ = SubResource("AnimationLibrary_sfm0x")
