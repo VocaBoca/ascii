@@ -80,40 +80,6 @@ shader_parameter/min_cell_fill = 0.1250000059375
 shader_parameter/bg_strength = 0.3950000187625
 shader_parameter/color_boost = 8.0
 
-[sub_resource type="Animation" id="Animation_33wto"]
-resource_name = "ConsoleClose"
-length = 1.0000017
-step = 0.016666668
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Terminal/ConsoleWindow:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1.0000017),
-"transitions": PackedFloat32Array(0.5, 1),
-"update": 0,
-"values": [Vector2(1000, 0), Vector2(1600, 0)]
-}
-
-[sub_resource type="Animation" id="Animation_2afu8"]
-resource_name = "ConsoleOpen"
-length = 1.0000017
-step = 0.016666668
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Terminal/ConsoleWindow:position")
-tracks/0/interp = 2
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 1.0000017),
-"transitions": PackedFloat32Array(2, 1),
-"update": 0,
-"values": [Vector2(1600, 0), Vector2(1000, 0)]
-}
-
 [sub_resource type="Animation" id="Animation_fkw4m"]
 length = 0.001
 tracks/0/type = "value"
@@ -127,18 +93,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [16.0]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Terminal/ConsoleWindow:position")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1000, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_g8ngl"]
@@ -160,8 +114,6 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_sfm0x"]
 _data = {
-&"ConsoleClose": SubResource("Animation_33wto"),
-&"ConsoleOpen": SubResource("Animation_2afu8"),
 &"RESET": SubResource("Animation_fkw4m"),
 &"SpotlightBlink": SubResource("Animation_g8ngl")
 }
@@ -233,10 +185,10 @@ mesh = ExtResource("4_fkw4m")
 surface_material_override/0 = SubResource("StandardMaterial3D_sfm0x")
 surface_material_override/1 = SubResource("StandardMaterial3D_fkw4m")
 
-[node name="Ascii3D" type="CanvasLayer" parent="." unique_id=635638733]
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=635638733]
 follow_viewport_enabled = true
 
-[node name="MainFrame" type="ColorRect" parent="Ascii3D" unique_id=1732385938 node_paths=PackedStringArray("viewport")]
+[node name="ASCII3D" type="ColorRect" parent="CanvasLayer" unique_id=1732385938 node_paths=PackedStringArray("viewport")]
 material = SubResource("ShaderMaterial_33wto")
 anchors_preset = -1
 anchor_right = 0.003125
@@ -247,22 +199,20 @@ script = ExtResource("4_4fyl6")
 viewport = NodePath("../../SubViewport")
 metadata/_edit_use_anchors_ = true
 
-[node name="ScreamerBaby" type="ColorRect" parent="Ascii3D" unique_id=1934004906]
-visible = false
-material = SubResource("ShaderMaterial_2afu8")
-offset_right = 1600.0
-offset_bottom = 900.0
-script = ExtResource("10_mq78g")
-
-[node name="Terminal" type="CanvasLayer" parent="." unique_id=797128593]
-
-[node name="ConsoleWindow" type="ColorRect" parent="Terminal" unique_id=1939923250]
-offset_left = 1000.0
+[node name="ConsoleWindow" type="ColorRect" parent="CanvasLayer" unique_id=1939923250]
+offset_top = 700.0
 offset_right = 1600.0
 offset_bottom = 900.0
 color = Color(0, 0, 0, 1)
 script = ExtResource("7_fkw4m")
 FONT_SIZE = 12
+
+[node name="ScreamerBaby" type="ColorRect" parent="CanvasLayer" unique_id=1934004906]
+visible = false
+material = SubResource("ShaderMaterial_2afu8")
+offset_right = 1600.0
+offset_bottom = 900.0
+script = ExtResource("10_mq78g")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1189118204]
 libraries/ = SubResource("AnimationLibrary_sfm0x")
@@ -273,9 +223,7 @@ volume_db = -18.0
 pitch_scale = 0.8
 script = ExtResource("12_33wto")
 
-[connection signal="ConsoleKeyPressed" from="Terminal/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_console_key_pressed"]
-[connection signal="ScreamerBabySpawn" from="Terminal/ConsoleWindow" to="Ascii3D/ScreamerBaby" method="_on_console_window_screamer_baby_spawn"]
-[connection signal="ScreamerBabySpawn" from="Terminal/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_screamer_baby_spawn"]
-[connection signal="ToggleConsoleVisibility" from="Terminal/ConsoleWindow" to="Terminal/ConsoleWindow" method="_on_toggle_console_visibility"]
-[connection signal="ToggleConsoleVisibility" from="Terminal/ConsoleWindow" to="AnimationPlayer" method="_on_console_window_toggle_console_visibility"]
+[connection signal="ConsoleKeyPressed" from="CanvasLayer/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_console_key_pressed"]
+[connection signal="ScreamerBabySpawn" from="CanvasLayer/ConsoleWindow" to="CanvasLayer/ScreamerBaby" method="_on_console_window_screamer_baby_spawn"]
+[connection signal="ScreamerBabySpawn" from="CanvasLayer/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_screamer_baby_spawn"]
 [connection signal="animation_finished" from="AnimationPlayer" to="AnimationPlayer" method="_on_animation_finished"]

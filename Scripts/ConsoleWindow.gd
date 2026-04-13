@@ -1,6 +1,7 @@
 extends Control
 signal ConsoleKeyPressed;
 signal ScreamerBabySpawn;
+signal ToggleConsoleVisibility(state : bool);
 # ─────────────────────────────────────────────
 #  Terminal.gd
 #  Attach to a Control node inside your CanvasLayer.
@@ -20,14 +21,17 @@ signal ScreamerBabySpawn;
 #  to have it auto-create the whole subtree.
 # ─────────────────────────────────────────────
 
-const FONT_SIZE       : int   = 16
-const BG_COLOR        : Color = Color(0.05, 0.05, 0.05, 0.92)
-const TEXT_COLOR      : Color = Color(0.0,  1.0,  0.45, 1.0)   # green phosphor
-const DIM_COLOR       : Color = Color(0.0,  0.6,  0.27, 1.0)
-const CURSOR_COLOR    : Color = Color(0.0,  1.0,  0.45, 1.0)
+@export_range(8,64) var FONT_SIZE : int = 32
+@export var BG_COLOR        : Color = Color(0.05, 0.05, 0.05, 0.92)
+@export var TEXT_COLOR      : Color = Color(0.0,  1.0,  0.45, 1.0)   # green phosphor
+@export var DIM_COLOR       : Color = Color(0.0,  0.6,  0.27, 1.0)
+@export var CURSOR_COLOR    : Color = Color(0.0,  1.0,  0.45, 1.0)
 const PROMPT_STR      : String = "@home # "
-const CURSOR_BLINK_HZ : float = 1.8   # blinks per second
+@export_range(0.0, 5.0, 0.1) var CURSOR_BLINK_HZ : float = 1.8   # blinks per second
 const MAX_HISTORY     : int   = 200   # lines kept in output
+
+# Close state
+var _is_in_closing_state : bool
 
 # ── node refs (populated in build_scene or _ready) ──────────────────────────
 var _output_label   : RichTextLabel
@@ -64,9 +68,11 @@ var username : String = getUsername()
 #  SCENE BUILDER  –  call this from your scene _ready if you don't want
 #                    to wire up nodes by hand in the editor.
 # ════════════════════════════════════════════════════════════════════════════
+var bg : ColorRect
+
 func build_scene() -> void:
 	# ── Background ──────────────────────────────────────────────────────────
-	var bg := ColorRect.new()
+	bg = ColorRect.new()
 	bg.name = "Background"
 	bg.color = BG_COLOR
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -76,7 +82,7 @@ func build_scene() -> void:
 	var vbox := VBoxContainer.new()
 	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	vbox.add_theme_constant_override("separation", 0)
-	add_child(vbox)
+	bg.add_child(vbox)
 
 	# ── ScrollContainer + OutputLabel ───────────────────────────────────────
 	_scroll = ScrollContainer.new()
@@ -169,7 +175,7 @@ func _process(delta: float) -> void:
 #  INPUT
 # ════════════════════════════════════════════════════════════════════════════
 func _input(event: InputEvent) -> void:
-	if not visible:
+	if not visible or _is_in_closing_state:
 		return
 
 	if event is InputEventKey and event.pressed:
@@ -207,7 +213,16 @@ func _input(event: InputEvent) -> void:
 					_output_label.clear()
 				else:
 					_type_char(event)
-			
+			KEY_EQUAL, KEY_MINUS:
+				if event.ctrl_pressed:
+					if event.keycode == KEY_EQUAL: FONT_SIZE=clampi(FONT_SIZE+1, 8, 64);
+					else: FONT_SIZE=clampi(FONT_SIZE-1, 8, 64);
+					set_process(false)
+					for n in bg.get_children(): bg.remove_child(n);
+					build_scene()
+					set_process(true)
+				else:
+					_type_char(event)
 			_:
 				_type_char(event)
 		ConsoleKeyPressed.emit()
@@ -275,13 +290,19 @@ func _execute(cmd: String) -> void:
 		"ver", "version":
 			_print_line("Terminal v1.0  –  Godot 4")
 		"exit", "quit":
+			_is_in_closing_state = true
+			ToggleConsoleVisibility.emit(false)
+			await get_tree().create_timer(1).timeout
+			_is_in_closing_state = false
 			visible = false
 		"baby":
+			ToggleConsoleVisibility.emit(false)
+			await get_tree().create_timer(1).timeout
 			visible = false
-			await get_tree().create_timer(3).timeout
 			ScreamerBabySpawn.emit()
 			await get_tree().create_timer(3).timeout
 			visible = true
+			ToggleConsoleVisibility.emit(true)
 		_:
 			_print_error("Unknown command: '%s'  (type [color=#ffffff]help[/color] for a list)" % name_)
 
@@ -298,9 +319,11 @@ func _cmd_help(_args: Array) -> void:
 	_print_raw("  [color=#ffffff]echo[/color] <text>   –  print text")
 	_print_raw("  [color=#ffffff]clear[/color]         –  clear the screen")
 	_print_raw("  [color=#ffffff]history[/color]       –  show command history")
-	_print_raw("  [color=#ffffff]ver[/color]          –  show version")
+	_print_raw("  [color=#ffffff]ver[/color]           –  show version")
 	_print_raw("  [color=#ffffff]exit[/color]          –  hide terminal")
 	_print_raw("  [color=#ffffff]baby[/color]          –  show baby")
+	_print_raw("  [color=#ffffff]Ctrl+Equal[/color]    –  Make font bigger")
+	_print_raw("  [color=#ffffff]Ctrl+Minus[/color]    –  Make font smaller")
 	_print_raw("")
 
 
@@ -357,3 +380,9 @@ func _history_navigate(direction: int) -> void:
 	else:
 		_input_buffer = _history[_history_idx]
 	_update_input_display()
+
+func _on_toggle_console_visibility(state: bool) -> void:
+	_is_in_closing_state = true
+	await get_tree().create_timer(1).timeout
+	_is_in_closing_state = false
+	pass # Replace with function body.
