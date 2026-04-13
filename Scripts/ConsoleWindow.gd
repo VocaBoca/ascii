@@ -1,5 +1,6 @@
 extends Control
-
+signal ConsoleKeyPressed;
+signal ScreamerBabySpawn;
 # ─────────────────────────────────────────────
 #  Terminal.gd
 #  Attach to a Control node inside your CanvasLayer.
@@ -24,7 +25,7 @@ const BG_COLOR        : Color = Color(0.05, 0.05, 0.05, 0.92)
 const TEXT_COLOR      : Color = Color(0.0,  1.0,  0.45, 1.0)   # green phosphor
 const DIM_COLOR       : Color = Color(0.0,  0.6,  0.27, 1.0)
 const CURSOR_COLOR    : Color = Color(0.0,  1.0,  0.45, 1.0)
-const PROMPT_STR      : String = "$ "
+const PROMPT_STR      : String = "@home # "
 const CURSOR_BLINK_HZ : float = 1.8   # blinks per second
 const MAX_HISTORY     : int   = 200   # lines kept in output
 
@@ -45,7 +46,19 @@ var _output_lines   : Array[String] = []
 # ── built-in font (monospace fallback) ───────────────────────────────────────
 # If you have a .ttf in res://fonts/ set this path; otherwise leave ""
 # and Godot will use its default monospace font.
-const MONO_FONT_PATH : String = ""   # e.g. "res://fonts/JetBrainsMono-Regular.ttf"
+
+# This font is part of The Ultimate Oldschool PC Font Pack by VileR
+# https://int10h.org/oldschool-pc-fonts/
+const MONO_FONT_PATH : String = "res://fonts/Ac437_IBM_EGA_8x8.ttf"
+
+# Username
+func getUsername() -> String:
+	if OS.has_environment("USERNAME"):
+		return OS.get_environment("USERNAME")
+	else:
+		return "Player"
+		
+var username : String = getUsername()
 
 # ════════════════════════════════════════════════════════════════════════════
 #  SCENE BUILDER  –  call this from your scene _ready if you don't want
@@ -102,7 +115,7 @@ func build_scene() -> void:
 
 	var prompt := Label.new()
 	prompt.name = "Prompt"
-	prompt.text = PROMPT_STR
+	prompt.text = username + PROMPT_STR
 	prompt.add_theme_color_override("font_color", DIM_COLOR)
 	prompt.add_theme_font_size_override("font_size", FONT_SIZE)
 	if MONO_FONT_PATH != "":
@@ -128,9 +141,8 @@ func build_scene() -> void:
 	row.add_child(_cursor_label)
 
 	# Print a welcome banner
-	_print_raw("[color=#00ff72]╔══════════════════════════════════╗[/color]")
-	_print_raw("[color=#00ff72]║   TERMINAL v1.0  –  type [b]help[/b]    ║[/color]")
-	_print_raw("[color=#00ff72]╚══════════════════════════════════╝[/color]")
+	_print_raw("[color=#00ff72]Terminal v0.1 alpha[/color]")
+	_print_raw("[color=#00ff72]Last login: [/color]"+username+" at TTY1")
 	_print_raw("")
 
 
@@ -172,16 +184,16 @@ func _input(event: InputEvent) -> void:
 					_input_buffer = _input_buffer.left(_input_buffer.length() - 1)
 					_update_input_display()
 
-			KEY_UP:
+			KEY_DOWN:
 				_history_navigate(-1)
 
-			KEY_DOWN:
+			KEY_UP:
 				_history_navigate(1)
 
 			KEY_C:
 				if event.ctrl_pressed:
 					# Ctrl+C  –  cancel current input
-					_print_line(PROMPT_STR + _input_buffer + "^C")
+					_print_line(username + PROMPT_STR + _input_buffer + "^C")
 					_input_buffer = ""
 					_history_idx = -1
 					_update_input_display()
@@ -195,10 +207,10 @@ func _input(event: InputEvent) -> void:
 					_output_label.clear()
 				else:
 					_type_char(event)
-
+			
 			_:
 				_type_char(event)
-
+		ConsoleKeyPressed.emit()
 		get_viewport().set_input_as_handled()
 
 
@@ -225,7 +237,7 @@ func _submit() -> void:
 	var raw := _input_buffer.strip_edges()
 
 	# Echo the command
-	_print_raw("[color=#4dffaa]" + PROMPT_STR + "[/color]" +
+	_print_raw("[color=#4dffaa]" + username + PROMPT_STR + "[/color]" +
 			   "[color=#ffffff]" + raw.xml_escape() + "[/color]")
 
 	if raw != "":
@@ -264,8 +276,14 @@ func _execute(cmd: String) -> void:
 			_print_line("Terminal v1.0  –  Godot 4")
 		"exit", "quit":
 			visible = false
+		"baby":
+			visible = false
+			await get_tree().create_timer(3).timeout
+			ScreamerBabySpawn.emit()
+			await get_tree().create_timer(3).timeout
+			visible = true
 		_:
-			_print_error("Unknown command: '%s'  (type [b]help[/b] for a list)" % name_)
+			_print_error("Unknown command: '%s'  (type [color=#ffffff]help[/color] for a list)" % name_)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -273,15 +291,16 @@ func _execute(cmd: String) -> void:
 # ════════════════════════════════════════════════════════════════════════════
 func _cmd_help(_args: Array) -> void:
 	_print_raw("")
-	_print_raw("[b][color=#00ff72]Hello World[/color][/b]")
+	_print_raw("[color=#00ff72]Hello World[/color]")
 	_print_raw("")
 	_print_raw("[color=#4dffaa]Available commands:[/color]")
-	_print_raw("  [b]help[/b]          –  show this message")
-	_print_raw("  [b]echo[/b] <text>   –  print text")
-	_print_raw("  [b]clear[/b]         –  clear the screen")
-	_print_raw("  [b]history[/b]       –  show command history")
-	_print_raw("  [b]ver[/b]           –  show version")
-	_print_raw("  [b]exit[/b]          –  hide terminal")
+	_print_raw("  [color=#ffffff]help[/color]          –  show this message")
+	_print_raw("  [color=#ffffff]echo[/color] <text>   –  print text")
+	_print_raw("  [color=#ffffff]clear[/color]         –  clear the screen")
+	_print_raw("  [color=#ffffff]history[/color]       –  show command history")
+	_print_raw("  [color=#ffffff]ver[/color]          –  show version")
+	_print_raw("  [color=#ffffff]exit[/color]          –  hide terminal")
+	_print_raw("  [color=#ffffff]baby[/color]          –  show baby")
 	_print_raw("")
 
 

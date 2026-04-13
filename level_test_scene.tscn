@@ -7,7 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://tll8kbevgpbn" path="res://Textures/Atlas5.png" id="3_x0c6s"]
 [ext_resource type="Script" uid="uid://d2lck71voytmp" path="res://Scripts/Color_Rect_Debug_Script.gd" id="4_4fyl6"]
 [ext_resource type="ArrayMesh" uid="uid://fpwa65lgb7oo" path="res://Models/TestModel.obj" id="4_fkw4m"]
-[ext_resource type="Script" uid="uid://c13v6a6co0t4g" path="res://Scripts/ConsoleScript.gd" id="7_fkw4m"]
+[ext_resource type="Script" uid="uid://c13v6a6co0t4g" path="res://Scripts/ConsoleWindow.gd" id="7_fkw4m"]
+[ext_resource type="Texture2D" uid="uid://ce1wphrly7t7" path="res://Textures/AAAAAAAAAAAAA.jpg" id="9_2afu8"]
+[ext_resource type="Script" uid="uid://dhsgm3awkj1ja" path="res://Animations.gd" id="9_g8ngl"]
+[ext_resource type="Script" uid="uid://c7wffkatnh7l6" path="res://Scripts/ScreamerBaby.gd" id="10_mq78g"]
+[ext_resource type="Script" uid="uid://be6amaw01dx6h" path="res://Scripts/AudioScript.gd" id="12_33wto"]
 
 [sub_resource type="Environment" id="Environment_fkw4m"]
 background_mode = 3
@@ -62,6 +66,58 @@ shader_parameter/min_cell_fill = 0.0
 shader_parameter/bg_strength = 0.0
 shader_parameter/color_boost = 1.0000000475
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2afu8"]
+shader = ExtResource("2_x0c6s")
+shader_parameter/source_tex = ExtResource("9_2afu8")
+shader_parameter/ascii_atlas = ExtResource("3_x0c6s")
+shader_parameter/cell_size = 6.70000012825
+shader_parameter/atlas_grid = Vector2(8, 6)
+shader_parameter/glyph_count = 48.0
+shader_parameter/atlas_mapping_power = 1.0
+shader_parameter/atlas_mapping_bias = 0.0
+shader_parameter/invert_ramp = false
+shader_parameter/min_cell_fill = 0.35
+shader_parameter/bg_strength = 0.25
+shader_parameter/color_boost = 1.0
+
+[sub_resource type="Animation" id="Animation_fkw4m"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SubViewport/SpotLight3D:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [16.0]
+}
+
+[sub_resource type="Animation" id="Animation_g8ngl"]
+resource_name = "SpotlightBlink"
+length = 0.23333502
+step = 0.016666668
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SubViewport/SpotLight3D:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.03333333, 0.08333333, 0.15000002, 0.18333332, 0.23333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [16.0, 5.483, 16.0, 16.0, 5.483, 16.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sfm0x"]
+_data = {
+&"RESET": SubResource("Animation_fkw4m"),
+&"SpotlightBlink": SubResource("Animation_g8ngl")
+}
+
 [node name="LevelTestScene" type="Node3D" unique_id=70158495]
 script = ExtResource("1_4fyl6")
 
@@ -70,7 +126,9 @@ environment = SubResource("Environment_fkw4m")
 
 [node name="SubViewport" type="SubViewport" parent="." unique_id=302337459]
 transparent_bg = true
+handle_input_locally = false
 size = Vector2i(1600, 900)
+render_target_update_mode = 4
 
 [node name="Floor" type="MeshInstance3D" parent="SubViewport" unique_id=50778675]
 transform = Transform3D(50, 0, 0, 0, -2.1855694e-06, 50, 0, -50, -2.1855694e-06, 0, 0, 0)
@@ -104,10 +162,11 @@ surface_material_override/0 = SubResource("StandardMaterial3D_8hbb6")
 
 [node name="SpotLight3D" type="SpotLight3D" parent="SubViewport" unique_id=326833247]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 3.5063756, 0)
-light_energy = 13.917
-spot_range = 8.212
-spot_attenuation = 1.19
-spot_angle = 63.01
+light_energy = 16.0
+light_specular = 0.0
+spot_range = 10.869
+spot_attenuation = 1.64
+spot_angle = 124.7
 
 [node name="AvatarTest" type="MeshInstance3D" parent="SubViewport" unique_id=1891808082]
 transform = Transform3D(0.46099934, 0.09033446, 0.07031572, -0.003706818, 0.30339208, -0.36546478, -0.11441536, 0.35414395, 0.2951545, -1.3592227, 3.4580095, 1.972)
@@ -115,12 +174,12 @@ visible = false
 mesh = SubResource("PlaneMesh_x0c6s")
 surface_material_override/0 = SubResource("StandardMaterial3D_hgkj1")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="SubViewport" unique_id=1521667753]
+[node name="TestPlayer" type="CharacterBody3D" parent="SubViewport" unique_id=1521667753]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewport/CharacterBody3D" unique_id=1607148197]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SubViewport/TestPlayer" unique_id=1607148197]
 shape = SubResource("CapsuleShape3D_g8ngl")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/CharacterBody3D" unique_id=1715825048]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="SubViewport/TestPlayer" unique_id=1715825048]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, -2.2068825)
 mesh = ExtResource("4_fkw4m")
 surface_material_override/0 = SubResource("StandardMaterial3D_sfm0x")
@@ -129,7 +188,7 @@ surface_material_override/1 = SubResource("StandardMaterial3D_fkw4m")
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=635638733]
 follow_viewport_enabled = true
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer" unique_id=1732385938 node_paths=PackedStringArray("viewport")]
+[node name="ASCII3D" type="ColorRect" parent="CanvasLayer" unique_id=1732385938 node_paths=PackedStringArray("viewport")]
 material = SubResource("ShaderMaterial_33wto")
 anchors_preset = -1
 anchor_right = 0.003125
@@ -146,3 +205,24 @@ offset_right = 1600.0
 offset_bottom = 900.0
 color = Color(0, 0, 0, 1)
 script = ExtResource("7_fkw4m")
+
+[node name="ScreamerBaby" type="ColorRect" parent="CanvasLayer" unique_id=1934004906]
+visible = false
+material = SubResource("ShaderMaterial_2afu8")
+offset_right = 1600.0
+offset_bottom = 900.0
+script = ExtResource("10_mq78g")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1189118204]
+libraries/ = SubResource("AnimationLibrary_sfm0x")
+script = ExtResource("9_g8ngl")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1333001166]
+volume_db = -18.0
+pitch_scale = 0.8
+script = ExtResource("12_33wto")
+
+[connection signal="ConsoleKeyPressed" from="CanvasLayer/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_console_key_pressed"]
+[connection signal="ScreamerBabySpawn" from="CanvasLayer/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_screamer_baby_spawn"]
+[connection signal="ScreamerBabySpawn" from="CanvasLayer/ConsoleWindow" to="CanvasLayer/ScreamerBaby" method="_on_console_window_screamer_baby_spawn"]
+[connection signal="animation_finished" from="AnimationPlayer" to="AnimationPlayer" method="_on_animation_finished"]
