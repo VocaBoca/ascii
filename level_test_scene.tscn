@@ -73,12 +73,12 @@ shader_parameter/ascii_atlas = ExtResource("3_x0c6s")
 shader_parameter/cell_size = 6.70000012825
 shader_parameter/atlas_grid = Vector2(8, 6)
 shader_parameter/glyph_count = 48.0
-shader_parameter/atlas_mapping_power = 1.0
-shader_parameter/atlas_mapping_bias = 0.0
+shader_parameter/atlas_mapping_power = 0.35700001369762
+shader_parameter/atlas_mapping_bias = -0.12999995867500003
 shader_parameter/invert_ramp = false
-shader_parameter/min_cell_fill = 0.35
-shader_parameter/bg_strength = 0.25
-shader_parameter/color_boost = 1.0
+shader_parameter/min_cell_fill = 0.1250000059375
+shader_parameter/bg_strength = 0.3950000187625
+shader_parameter/color_boost = 8.0
 
 [sub_resource type="Animation" id="Animation_fkw4m"]
 length = 0.001
@@ -223,6 +223,6 @@ pitch_scale = 0.8
 script = ExtResource("12_33wto")
 
 [connection signal="ConsoleKeyPressed" from="CanvasLayer/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_console_key_pressed"]
-[connection signal="ScreamerBabySpawn" from="CanvasLayer/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_screamer_baby_spawn"]
 [connection signal="ScreamerBabySpawn" from="CanvasLayer/ConsoleWindow" to="CanvasLayer/ScreamerBaby" method="_on_console_window_screamer_baby_spawn"]
+[connection signal="ScreamerBabySpawn" from="CanvasLayer/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_screamer_baby_spawn"]
 [connection signal="animation_finished" from="AnimationPlayer" to="AnimationPlayer" method="_on_animation_finished"]

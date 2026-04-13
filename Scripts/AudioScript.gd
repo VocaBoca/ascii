@@ -20,11 +20,13 @@ func _process(delta: float) -> void:
 
 func _on_console_window_console_key_pressed() -> void:
 	stream = keysounds.pick_random()
+	pitch_scale = 0.8
 	play()
 	pass # Replace with function body.
 
 
 func _on_console_window_screamer_baby_spawn() -> void:
 	stream = babysound
+	pitch_scale = 0.4
 	play()
 	pass # Replace with function body.
