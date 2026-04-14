@@ -1,13 +1,5 @@
 res://level_test_scene.tscn
 res://Shaders/ASCII_main.gdshader
 res://Scripts/ConsoleWindow2Test.gd
-res://Scripts/AudioScript.gd
-res://Scripts/MoveToPoint.gd
-res://Scripts/pathManager.gd
-res://Scripts/PointOfInterest.gd
-res://Scripts/LocationManager.gd
-res://Scripts/Movement/MoveToPoint.gd
 res://Scripts/Movement/LocationManager.gd
-res://Scripts/Movement/PointOfInterest.gd
 res://Scripts/Movement/PathManager.gd
-res://Scripts/CameraTestMovement.gd

@@ -1,8 +1,10 @@
 extends Node
 
+
 @export var terminal_path: NodePath
 @export var player_path: NodePath
 @export var location_manager_path: NodePath
+
 
 var terminal: Node
 var player: CharacterBody3D
@@ -26,6 +28,7 @@ func _ready() -> void:
 		return
 
 	terminal.MoveToPointRequested.connect(_on_move_to_point_requested)
+	terminal.ListPointsRequested.connect(_on_list_points_requested)
 
 
 func _on_move_to_point_requested(point_name: String) -> void:
@@ -37,3 +40,15 @@ func _on_move_to_point_requested(point_name: String) -> void:
 
 	player.move_to_target(target)
 	terminal.print_output("Moving to: " + target.display_name)
+	
+func _on_list_points_requested() -> void:
+	var points = location_manager.get_all_point_ids()
+
+	if points.is_empty():
+		terminal.print_output("No locations available")
+		return
+
+	terminal.print_output("Available locations:")
+
+	for p in points:
+		terminal.print_output("  " + p)

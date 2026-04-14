@@ -31,3 +31,6 @@ func get_point(location_id: String) -> PointOfInterest:
 	print("Searching for key:", key)
 	print("Available keys:", points.keys())
 	return points.get(key, null)
+
+func get_all_point_ids() -> Array:
+	return points.keys()

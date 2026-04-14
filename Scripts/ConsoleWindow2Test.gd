@@ -1,5 +1,6 @@
 extends Control
 
+signal ListPointsRequested
 signal MoveToPointRequested(point_name: String)
 signal ConsoleKeyPressed
 signal ScreamerBabySpawn
@@ -366,6 +367,8 @@ func _cmd_cd(args: Array) -> void:
 	var point_name := String(args[0]).strip_edges()
 	MoveToPointRequested.emit(point_name)
 
+func _cmd_ls() -> void:
+	ListPointsRequested.emit()
 
 func _execute(cmd: String) -> void:
 	var parts: Array = cmd.split(" ", false)
@@ -410,7 +413,10 @@ func _execute(cmd: String) -> void:
 
 		"cd":
 			_cmd_cd(args)
-
+		
+		"ls":
+			_cmd_ls()
+		
 		_:
 			_print_error("Unknown command: '%s'  (type [color=#ffffff]help[/color] for a list)" % name_)
 
