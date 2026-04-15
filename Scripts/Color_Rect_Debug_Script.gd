@@ -3,6 +3,7 @@ extends ColorRect
 @export var viewport: SubViewport
 
 func _ready() -> void:
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	var mat := material as ShaderMaterial
 	if mat == null:
 		print("NO MATERIAL")

@@ -1,3 +1,5 @@
 res://level_test_scene.tscn
 res://Shaders/ASCII_main.gdshader
-res://Scripts/ConsoleWindow2Test.gd
+res://Scripts/Movement/PathManager.gd
+res://Scripts/CanvasResize.gd
+res://Scripts/Color_Rect_Debug_Script.gd

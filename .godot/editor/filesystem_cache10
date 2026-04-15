@@ -1,8 +1,8 @@
 63f7b34db8d8cdea90c76aacccf841ec
-::res://::1776279115
+::res://::1776280581
 Animations.gd::GDScript::7688129959269194178::1776104506::0::1::::<>AnimationPlayer<><>0<>0<><>::
 icon.svg::CompressedTexture2D::1790880795757653::1775847400::1775847465::1::::<><><>0<>0<>1d558fff71561543e2cf7e0d300c3350<>res://.godot/imported/icon.svg-218a8f2b3041327d8a5756f3a245f83b.ctex::
-level_test_scene.tscn::PackedScene::6260221402537635459::1776196756::0::1::::<><><>0<>0<><>::uid://dnrdhm2n03uvc::::res://Scripts/LevelTestScene.gd<>uid://f8k8y1ivfqh0::::res://Scripts/CameraTestMovement.gd<>uid://dbgy1haj2ptfl::::res://Scripts/Movement/PathManager.gd<>uid://d2hyrv34invfm::::res://Shaders/ASCII_main.gdshader<>uid://cadstupcq0n4v::::res://Textures/36aace9b44843519c1407732ce06818b.jpg<>uid://tll8kbevgpbn::::res://Textures/Atlas5.png<>uid://d2lck71voytmp::::res://Scripts/Color_Rect_Debug_Script.gd<>uid://fpwa65lgb7oo::::res://Models/TestModel.obj<>uid://bwknvqdn2lx54::::res://Scripts/Movement/MoveToPoint.gd<>uid://1fad2bure42j::::res://Scripts/Movement/PointOfInterest.gd<>uid://bu5fxo757cgke::::res://Scripts/Movement/LocationManager.gd<>uid://ce1wphrly7t7::::res://Textures/AAAAAAAAAAAAA.jpg<>uid://dhsgm3awkj1ja::::res://Animations.gd<>uid://o4fw5xv1f8mv::::res://Scripts/ConsoleWindow2Test.gd<>uid://c7wffkatnh7l6::::res://Scripts/ScreamerBaby.gd<>uid://be6amaw01dx6h::::res://Scripts/AudioScript.gd
+level_test_scene.tscn::PackedScene::6260221402537635459::1776280396::0::1::::<><><>0<>0<><>::uid://dnrdhm2n03uvc::::res://Scripts/LevelTestScene.gd<>uid://f8k8y1ivfqh0::::res://Scripts/CameraTestMovement.gd<>uid://dbgy1haj2ptfl::::res://Scripts/Movement/PathManager.gd<>uid://d2hyrv34invfm::::res://Shaders/ASCII_main.gdshader<>uid://cadstupcq0n4v::::res://Textures/36aace9b44843519c1407732ce06818b.jpg<>uid://tll8kbevgpbn::::res://Textures/Atlas5.png<>uid://d2lck71voytmp::::res://Scripts/Color_Rect_Debug_Script.gd<>uid://fpwa65lgb7oo::::res://Models/TestModel.obj<>uid://bwknvqdn2lx54::::res://Scripts/Movement/MoveToPoint.gd<>uid://1fad2bure42j::::res://Scripts/Movement/PointOfInterest.gd<>uid://bu5fxo757cgke::::res://Scripts/Movement/LocationManager.gd<>uid://ce1wphrly7t7::::res://Textures/AAAAAAAAAAAAA.jpg<>uid://dhsgm3awkj1ja::::res://Animations.gd<>uid://o4fw5xv1f8mv::::res://Scripts/ConsoleWindow2Test.gd<>uid://c7wffkatnh7l6::::res://Scripts/ScreamerBaby.gd<>uid://be6amaw01dx6h::::res://Scripts/AudioScript.gd
 TestScene.tscn::PackedScene::855609227061733535::1775939056::0::1::::<><><>0<>0<><>::uid://n3reo1pigugx::::res://Scripts/Cube_Rotation.gd<>uid://ce1wphrly7t7::::res://Textures/AAAAAAAAAAAAA.jpg<>uid://bxxulom01f5x5::::res://Scripts/Jumpscare.gd<>uid://c8dm47qmxdvs::::res://Textures/Calibration16.png<>uid://d2hyrv34invfm::::res://Shaders/ASCII_main.gdshader<>uid://hchw2aov4j04::::res://Textures/Atlas3.png<>uid://d2lck71voytmp::::res://Scripts/Color_Rect_Debug_Script.gd
 ::res://Audio/::1776094510
 ::res://Audio/Keyboard/::1776104500
@@ -16,11 +16,11 @@ Ac437_IBM_EGA_8x8.ttf::FontFile::7987264350208006423::1776094510::1776104500::1:
 ::res://Models/::1776094502
 TestModel.obj::Mesh::383247333417792178::1776061697::1776094502::1::::<><><>0<>0<>0fd470c80329f26f07edbb1019e0e8d8<>res://.godot/imported/TestModel.obj-7b2a092e5c6c1b0dd5ea3caa32883d76.mesh<*>res://.godot/imported/TestModel.obj-7b2a092e5c6c1b0dd5ea3caa32883d76.mesh::
 ::res://Scenes/::1775938512
-::res://Scripts/::1776179160
+::res://Scripts/::1776280346
 AudioScript.gd::GDScript::2731193233304415449::1776106203::0::1::::<>AudioStreamPlayer<><>0<>0<><>::
 CameraTestMovement.gd::GDScript::419736086317740735::1776110572::0::1::::<>Camera3D<><>0<>0<><>::
 Color_Rect_Debug_Script.gd::GDScript::9077209998411354675::1775847400::0::1::::<>ColorRect<><>0<>0<><>::
-ConsoleWindow2Test.gd::GDScript::1042855250450056537::1776179160::0::1::::<>Control<><>0<>0<><>::
+ConsoleWindow2Test.gd::GDScript::1042855250450056537::1776280346::0::1::::<>Control<><>0<>0<><>::
 ConsoleWindow.gd::GDScript::6656884343547387348::1776104506::0::1::::<>Control<><>0<>0<><>::
 Cube_Rotation.gd::GDScript::971297652645042243::1775847400::0::1::::<>MeshInstance3D<><>0<>0<><>::
 Jumpscare.gd::GDScript::4049479514334921228::1775942887::0::1::::<>MeshInstance3D<><>0<>0<><>::
@@ -31,8 +31,8 @@ LocationManager.gd::GDScript::3852474333465741632::1776179226::0::1::::<>Node<><
 MoveToPoint.gd::GDScript::3952046689483595229::1776109240::0::1::::<>CharacterBody3D<><>0<>0<><>::
 PathManager.gd::GDScript::7243341167818679241::1776179160::0::1::::<>Node<><>0<>0<><>::
 PointOfInterest.gd::GDScript::1835238601347731715::1776108553::0::1::::PointOfInterest<>Node3D<><>0<>0<><>::
-::res://Shaders/::1776196756
-ASCII_main.gdshader::Shader::9070300187481104402::1776196756::0::1::::<><><>0<>0<><>::
+::res://Shaders/::1776279380
+ASCII_main.gdshader::Shader::9070300187481104402::1776279380::0::1::::<><><>0<>0<><>::
 ::res://Textures/::1775942990
 36aace9b44843519c1407732ce06818b.jpg::CompressedTexture2D::4780162410354690795::1775942982::1775942990::1::::<><><>0<>0<>a490ef24705edd325f087111684133aa<>res://.godot/imported/36aace9b44843519c1407732ce06818b.jpg-887b7484f5b3658b8e0777a8656ed48d.s3tc.ctex::
 AAAAAAAAAAAAA.jpg::CompressedTexture2D::150253927022105590::1775847400::1775938802::1::::<><><>0<>0<>8910cc149d243e362a90befeaa5277f0<>res://.godot/imported/AAAAAAAAAAAAA.jpg-2aff08ec2682cf9f429779b32d44eb85.s3tc.ctex::
