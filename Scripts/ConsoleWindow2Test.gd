@@ -10,7 +10,17 @@ signal ToggleConsoleVisibility(state: bool)
 #  Terminal.gd
 # ─────────────────────────────────────────────
 
+enum TerminalDock {
+	TOP,
+	BOTTOM,
+	LEFT,
+	RIGHT
+}
+
 @export_range(8, 64) var FONT_SIZE: int = 16
+@export var DOCK_SIDE: TerminalDock = TerminalDock.RIGHT
+@export_range(0.05, 1.0, 0.01) var WIDTH_RATIO: float = 0.30
+
 @export var ERROR_COLOR: Color = Color(1.0, 0.25, 0.25, 1.0)
 @export var BG_COLOR: Color = Color(0.05, 0.05, 0.05, 0.92)
 @export var TEXT_COLOR: Color = Color(0.0, 1.0, 0.45, 1.0)
@@ -65,13 +75,14 @@ func _get_username() -> String:
 func _ready() -> void:
 	_init_font()
 
-	# If scene wasn't wired manually, auto-build.
 	if not _try_cache_existing_nodes():
 		build_scene()
 	else:
 		_apply_visual_settings()
 		_refresh_output()
 		_update_input_display()
+
+	_update_terminal_size()
 
 	set_process(true)
 	set_process_input(true)
@@ -93,6 +104,11 @@ func _process(delta: float) -> void:
 		_cursor_timer = 0.0
 		_cursor_visible = not _cursor_visible
 		_cursor_label.visible = _cursor_visible
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_update_terminal_size()
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -125,20 +141,17 @@ func _try_cache_existing_nodes() -> bool:
 
 
 func build_scene() -> void:
-	# Root background
 	bg = ColorRect.new()
 	bg.name = "Background"
 	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
 
-	# Main layout
 	_root_vbox = VBoxContainer.new()
 	_root_vbox.name = "RootVBox"
 	_root_vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root_vbox.add_theme_constant_override("separation", 0)
 	bg.add_child(_root_vbox)
 
-	# Scroll + output
 	_scroll = ScrollContainer.new()
 	_scroll.name = "ScrollContainer"
 	_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -153,13 +166,11 @@ func build_scene() -> void:
 	_output_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_scroll.add_child(_output_label)
 
-	# Separator
 	_separator = ColorRect.new()
 	_separator.name = "Separator"
 	_separator.custom_minimum_size = Vector2(0, 1)
 	_root_vbox.add_child(_separator)
 
-	# Input row
 	_input_row = HBoxContainer.new()
 	_input_row.name = "InputRow"
 	_input_row.add_theme_constant_override("separation", 0)
@@ -180,6 +191,65 @@ func build_scene() -> void:
 
 	_apply_visual_settings()
 	_print_welcome()
+
+
+func _update_terminal_size() -> void:
+	var viewport_size := get_viewport_rect().size
+	var thickness_x := viewport_size.x * WIDTH_RATIO
+	var thickness_y := viewport_size.y * WIDTH_RATIO
+
+	match DOCK_SIDE:
+		TerminalDock.TOP:
+			anchor_left = 0.0
+			anchor_right = 1.0
+			anchor_top = 0.0
+			anchor_bottom = 0.0
+
+			offset_left = 0
+			offset_right = 0
+			offset_top = 0
+			offset_bottom = thickness_y
+
+		TerminalDock.BOTTOM:
+			anchor_left = 0.0
+			anchor_right = 1.0
+			anchor_top = 1.0
+			anchor_bottom = 1.0
+
+			offset_left = 0
+			offset_right = 0
+			offset_bottom = 0
+			offset_top = -thickness_y
+
+		TerminalDock.LEFT:
+			anchor_left = 0.0
+			anchor_right = 0.0
+			anchor_top = 0.0
+			anchor_bottom = 1.0
+
+			offset_left = 0
+			offset_right = thickness_x
+			offset_top = 0
+			offset_bottom = 0
+
+		TerminalDock.RIGHT:
+			anchor_left = 1.0
+			anchor_right = 1.0
+			anchor_top = 0.0
+			anchor_bottom = 1.0
+
+			offset_left = -thickness_x
+			offset_right = 0
+			offset_top = 0
+			offset_bottom = 0
+
+	if is_instance_valid(bg):
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+
+
+func _set_dock_side(side: TerminalDock) -> void:
+	DOCK_SIDE = side
+	_update_terminal_size()
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -267,6 +337,32 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed:
 		var key_event := event as InputEventKey
 		var key: int = key_event.keycode
+
+		if key_event.shift_pressed:
+			match key:
+				KEY_UP:
+					_set_dock_side(TerminalDock.TOP)
+					ConsoleKeyPressed.emit()
+					get_viewport().set_input_as_handled()
+					return
+
+				KEY_DOWN:
+					_set_dock_side(TerminalDock.BOTTOM)
+					ConsoleKeyPressed.emit()
+					get_viewport().set_input_as_handled()
+					return
+
+				KEY_LEFT:
+					_set_dock_side(TerminalDock.LEFT)
+					ConsoleKeyPressed.emit()
+					get_viewport().set_input_as_handled()
+					return
+
+				KEY_RIGHT:
+					_set_dock_side(TerminalDock.RIGHT)
+					ConsoleKeyPressed.emit()
+					get_viewport().set_input_as_handled()
+					return
 
 		match key:
 			KEY_ENTER, KEY_KP_ENTER:
@@ -367,8 +463,10 @@ func _cmd_cd(args: Array) -> void:
 	var point_name := String(args[0]).strip_edges()
 	MoveToPointRequested.emit(point_name)
 
+
 func _cmd_ls() -> void:
 	ListPointsRequested.emit()
+
 
 func _execute(cmd: String) -> void:
 	var parts: Array = cmd.split(" ", false)
@@ -413,10 +511,10 @@ func _execute(cmd: String) -> void:
 
 		"cd":
 			_cmd_cd(args)
-		
+
 		"ls":
 			_cmd_ls()
-		
+
 		_:
 			_print_error("Unknown command: '%s'  (type [color=#ffffff]help[/color] for a list)" % name_)
 
@@ -437,6 +535,11 @@ func _cmd_help(_args: Array) -> void:
 	_print_raw("  [color=#ffffff]exit[/color]          –  hide terminal")
 	_print_raw("  [color=#ffffff]baby[/color]          –  show baby")
 	_print_raw("  [color=#ffffff]cd[/color] <name>     –  move player to object")
+	_print_raw("  [color=#ffffff]ls[/color]            –  show available points")
+	_print_raw("  [color=#ffffff]Shift+↑[/color]       –  dock terminal to top")
+	_print_raw("  [color=#ffffff]Shift+↓[/color]       –  dock terminal to bottom")
+	_print_raw("  [color=#ffffff]Shift+←[/color]       –  dock terminal to left")
+	_print_raw("  [color=#ffffff]Shift+→[/color]       –  dock terminal to right")
 	_print_raw("  [color=#ffffff]Ctrl+=[/color]        –  make font bigger")
 	_print_raw("  [color=#ffffff]Ctrl+-[/color]        –  make font smaller")
 	_print_raw("")

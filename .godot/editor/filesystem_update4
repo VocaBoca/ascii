@@ -1,5 +1,3 @@
 res://level_test_scene.tscn
 res://Shaders/ASCII_main.gdshader
 res://Scripts/ConsoleWindow2Test.gd
-res://Scripts/Movement/LocationManager.gd
-res://Scripts/Movement/PathManager.gd
