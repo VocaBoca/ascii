@@ -1,32 +1,54 @@
-extends AudioStreamPlayer
+extends Node
+
+const POOL_SIZE := 12
+
+@export var key_volume_db: float = -12.0
+@export var baby_volume_db: float = -4.0
+@export var audio_bus: String = "Master"
 
 var keysounds: Array[AudioStream] = []
 var babysound: AudioStream
+var players: Array[AudioStreamPlayer] = []
+var _next_player_idx := 0
 
-# Called when the node enters the scene tree for the first time.
+
 func _ready() -> void:
 	keysounds = [
 		preload("res://Audio/Keyboard/click1.wav"),
-		preload("res://Audio/Keyboard/click2.wav")
+		preload("res://Audio/Keyboard/click2.wav"),
 	]
 	babysound = preload("res://Audio/Other/baby.wav")
-	pass # Replace with function body.
+
+	for i in POOL_SIZE:
+		var p := AudioStreamPlayer.new()
+		p.bus = audio_bus
+		p.volume_db = key_volume_db
+		add_child(p)
+		players.append(p)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _play_sound(sound: AudioStream, pitch: float = 1.0, volume: float = 0.0) -> void:
+	var player := players[_next_player_idx]
+	_next_player_idx = (_next_player_idx + 1) % players.size()
+
+	player.stop()
+	player.stream = sound
+	player.pitch_scale = pitch
+	player.volume_db = volume
+	player.play()
 
 
 func _on_console_window_console_key_pressed() -> void:
-	stream = keysounds.pick_random()
-	pitch_scale = randf_range(0.75, 0.85)
-	play()
-	pass # Replace with function body.
+	_play_sound(
+		keysounds.pick_random(),
+		randf_range(0.65, 0.75),
+		key_volume_db
+	)
 
 
 func _on_console_window_screamer_baby_spawn() -> void:
-	stream = babysound
-	pitch_scale = 0.4
-	play()
-	pass # Replace with function body.
+	_play_sound(
+		babysound,
+		0.4,
+		baby_volume_db
+	)

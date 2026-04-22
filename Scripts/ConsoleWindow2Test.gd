@@ -20,6 +20,7 @@ enum TerminalDock {
 @export_range(8, 64) var FONT_SIZE: int = 16
 @export var DOCK_SIDE: TerminalDock = TerminalDock.RIGHT
 @export_range(0.05, 1.0, 0.01) var WIDTH_RATIO: float = 0.30
+@export_range(0.05, 2.0, 0.01) var TOGGLE_ANIM_TIME: float = 0.22
 
 @export var ERROR_COLOR: Color = Color(1.0, 0.25, 0.25, 1.0)
 @export var BG_COLOR: Color = Color(0.05, 0.05, 0.05, 0.92)
@@ -37,13 +38,18 @@ const MAX_COMMAND_HISTORY: int = 100
 const MONO_FONT_PATH: String = "res://fonts/Ac437_IBM_EGA_8x8.ttf"
 
 # ── state ────────────────────────────────────────────────────────────────────
-var _is_in_closing_state: bool = false
+var _is_animating: bool = false
+var _is_console_hidden: bool = false
+var _is_updating_layout: bool = false
+var _shown_position: Vector2 = Vector2.ZERO
+
 var _input_buffer: String = ""
 var _cursor_visible: bool = true
 var _cursor_timer: float = 0.0
 var _history: Array[String] = []
 var _history_idx: int = -1
 var _output_lines: Array[String] = []
+var _slide_tween: Tween
 
 # ── node refs ────────────────────────────────────────────────────────────────
 var bg: ColorRect
@@ -82,14 +88,18 @@ func _ready() -> void:
 		_refresh_output()
 		_update_input_display()
 
+	if not get_viewport().size_changed.is_connected(_on_viewport_size_changed):
+		get_viewport().size_changed.connect(_on_viewport_size_changed)
+
 	_update_terminal_size()
+	call_deferred("_apply_current_visibility_position")
 
 	set_process(true)
 	set_process_input(true)
 
 
 func _process(delta: float) -> void:
-	if not visible or _is_in_closing_state:
+	if not visible or _is_animating or _is_console_hidden:
 		return
 
 	if not is_instance_valid(_cursor_label):
@@ -106,9 +116,8 @@ func _process(delta: float) -> void:
 		_cursor_label.visible = _cursor_visible
 
 
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_RESIZED:
-		_update_terminal_size()
+func _on_viewport_size_changed() -> void:
+	call_deferred("_update_terminal_size")
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -194,6 +203,11 @@ func build_scene() -> void:
 
 
 func _update_terminal_size() -> void:
+	if _is_updating_layout:
+		return
+
+	_is_updating_layout = true
+
 	var viewport_size := get_viewport_rect().size
 	var thickness_x := viewport_size.x * WIDTH_RATIO
 	var thickness_y := viewport_size.y * WIDTH_RATIO
@@ -246,10 +260,74 @@ func _update_terminal_size() -> void:
 	if is_instance_valid(bg):
 		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
+	_shown_position = position
+	_apply_current_visibility_position()
+
+	_is_updating_layout = false
+
 
 func _set_dock_side(side: TerminalDock) -> void:
 	DOCK_SIDE = side
 	_update_terminal_size()
+
+
+func _get_shown_position() -> Vector2:
+	return _shown_position
+
+
+func _get_hidden_position() -> Vector2:
+	var rect_size := size
+	if rect_size.x <= 0.0 or rect_size.y <= 0.0:
+		rect_size = get_rect().size
+
+	match DOCK_SIDE:
+		TerminalDock.TOP:
+			return _shown_position + Vector2(0, -rect_size.y)
+
+		TerminalDock.BOTTOM:
+			return _shown_position + Vector2(0, rect_size.y)
+
+		TerminalDock.LEFT:
+			return _shown_position + Vector2(-rect_size.x, 0)
+
+		TerminalDock.RIGHT:
+			return _shown_position + Vector2(rect_size.x, 0)
+
+	return _shown_position
+
+
+func _apply_current_visibility_position() -> void:
+	position = _get_hidden_position() if _is_console_hidden else _get_shown_position()
+
+
+func _animate_console_hidden_state(hidden: bool) -> void:
+	if _is_animating or _is_console_hidden == hidden:
+		return
+
+	if _slide_tween != null and _slide_tween.is_valid():
+		_slide_tween.kill()
+
+	_is_animating = true
+	visible = true
+
+	var target := _get_hidden_position() if hidden else _get_shown_position()
+
+	_slide_tween = create_tween()
+	_slide_tween.set_trans(Tween.TRANS_CUBIC)
+	_slide_tween.set_ease(Tween.EASE_OUT)
+	_slide_tween.tween_property(self, "position", target, TOGGLE_ANIM_TIME)
+
+	await _slide_tween.finished
+
+	_is_console_hidden = hidden
+	_is_animating = false
+
+	# только уведомление наружу
+	ToggleConsoleVisibility.emit(not hidden)
+
+
+func _toggle_console_hidden() -> void:
+	await _animate_console_hidden_state(not _is_console_hidden)
 
 
 # ════════════════════════════════════════════════════════════════════════════
@@ -331,12 +409,17 @@ func _set_font_size(new_size: int) -> void:
 #  INPUT
 # ════════════════════════════════════════════════════════════════════════════
 func _input(event: InputEvent) -> void:
-	if not visible or _is_in_closing_state:
-		return
-
 	if event is InputEventKey and event.pressed:
 		var key_event := event as InputEventKey
 		var key: int = key_event.keycode
+
+		if key == KEY_QUOTELEFT:
+			_toggle_console_hidden()
+			get_viewport().set_input_as_handled()
+			return
+
+		if not visible or _is_animating or _is_console_hidden:
+			return
 
 		if key_event.shift_pressed:
 			match key:
@@ -447,7 +530,7 @@ func _submit() -> void:
 			if _history.size() > MAX_COMMAND_HISTORY:
 				_history.pop_back()
 
-		_execute(raw)
+		await _execute(raw)
 
 	_input_buffer = ""
 	_history_idx = -1
@@ -494,20 +577,13 @@ func _execute(cmd: String) -> void:
 			_print_line("Terminal v1.0  –  Godot 4")
 
 		"exit", "quit":
-			_is_in_closing_state = true
-			ToggleConsoleVisibility.emit(false)
-			#await get_tree().create_timer(1.0).timeout
-			_is_in_closing_state = false
-			visible = false
+			await _animate_console_hidden_state(true)
 
 		"baby":
-			ToggleConsoleVisibility.emit(false)
-			#await get_tree().create_timer(1.0).timeout
-			visible = false
+			await _animate_console_hidden_state(true)
 			ScreamerBabySpawn.emit()
 			await get_tree().create_timer(3.0).timeout
-			visible = true
-			ToggleConsoleVisibility.emit(true)
+			await _animate_console_hidden_state(false)
 
 		"cd":
 			_cmd_cd(args)
@@ -536,6 +612,7 @@ func _cmd_help(_args: Array) -> void:
 	_print_raw("  [color=#ffffff]baby[/color]          –  show baby")
 	_print_raw("  [color=#ffffff]cd[/color] <name>     –  move player to object")
 	_print_raw("  [color=#ffffff]ls[/color]            –  show available points")
+	_print_raw("  [color=#ffffff]`[/color]             –  hide/show terminal")
 	_print_raw("  [color=#ffffff]Shift+↑[/color]       –  dock terminal to top")
 	_print_raw("  [color=#ffffff]Shift+↓[/color]       –  dock terminal to bottom")
 	_print_raw("  [color=#ffffff]Shift+←[/color]       –  dock terminal to left")
@@ -628,10 +705,3 @@ func _history_navigate(direction: int) -> void:
 		_input_buffer = _history[_history_idx]
 
 	_update_input_display()
-
-
-func _on_toggle_console_visibility(state: bool) -> void:
-	_is_in_closing_state = true
-	await get_tree().create_timer(0.5).timeout
-	_is_in_closing_state = false
-	visible = state

@@ -1,4 +1,4 @@
 res://level_test_scene.tscn
 res://Shaders/ASCII_main.gdshader
-res://Animations.gd
 res://Scripts/ConsoleWindow2Test.gd
+res://Scripts/AudioScript.gd

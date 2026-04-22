@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://1fad2bure42j" path="res://Scripts/Movement/PointOfInterest.gd" id="7_cmw0u"]
 [ext_resource type="Script" uid="uid://bu5fxo757cgke" path="res://Scripts/Movement/LocationManager.gd" id="8_cjqk3"]
 [ext_resource type="Texture2D" uid="uid://ce1wphrly7t7" path="res://Textures/AAAAAAAAAAAAA.jpg" id="9_2afu8"]
+[ext_resource type="Script" uid="uid://dhsgm3awkj1ja" path="res://Animations.gd" id="9_g8ngl"]
 [ext_resource type="Script" uid="uid://o4fw5xv1f8mv" path="res://Scripts/ConsoleWindow2Test.gd" id="10_33wto"]
 [ext_resource type="Script" uid="uid://c7wffkatnh7l6" path="res://Scripts/ScreamerBaby.gd" id="10_mq78g"]
 [ext_resource type="Script" uid="uid://be6amaw01dx6h" path="res://Scripts/AudioScript.gd" id="12_33wto"]
@@ -88,6 +89,92 @@ shader_parameter/invert_ramp = false
 shader_parameter/min_cell_fill = 0.1250000059375
 shader_parameter/bg_strength = 0.3950000187625
 shader_parameter/color_boost = 8.0
+
+[sub_resource type="Animation" id="Animation_33wto"]
+resource_name = "ConsoleClose"
+length = 1.0000017
+step = 0.016666668
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Terminal/ConsoleWindow:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.0000017),
+"transitions": PackedFloat32Array(0.5, 1),
+"update": 0,
+"values": [Vector2(1000, 0), Vector2(1600, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_2afu8"]
+resource_name = "ConsoleOpen"
+length = 1.0000017
+step = 0.016666668
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Terminal/ConsoleWindow:position")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.0000017),
+"transitions": PackedFloat32Array(2, 1),
+"update": 0,
+"values": [Vector2(1600, 0), Vector2(1000, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_fkw4m"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SubViewport/SpotLight3D:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [16.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Terminal/ConsoleWindow:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1000, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_g8ngl"]
+resource_name = "SpotlightBlink"
+length = 0.23333502
+step = 0.016666668
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("SubViewport/SpotLight3D:light_energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.03333333, 0.08333333, 0.15000002, 0.18333332, 0.23333333),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [16.0, 5.483, 16.0, 16.0, 5.483, 16.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_sfm0x"]
+_data = {
+&"ConsoleClose": SubResource("Animation_33wto"),
+&"ConsoleOpen": SubResource("Animation_2afu8"),
+&"RESET": SubResource("Animation_fkw4m"),
+&"SpotlightBlink": SubResource("Animation_g8ngl")
+}
 
 [node name="LevelTestScene" type="Node3D" unique_id=70158495]
 script = ExtResource("1_4fyl6")
@@ -246,11 +333,18 @@ script = ExtResource("10_33wto")
 DOCK_SIDE = 2
 ERROR_COLOR = Color(1, 0.2509804, 0.2509804, 1)
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1189118204]
+libraries/ = SubResource("AnimationLibrary_sfm0x")
+script = ExtResource("9_g8ngl")
+
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=1333001166]
-volume_db = -41.855
+volume_db = -18.0
 pitch_scale = 0.8
 script = ExtResource("12_33wto")
 
 [connection signal="ConsoleKeyPressed" from="Terminal/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_console_key_pressed"]
 [connection signal="ScreamerBabySpawn" from="Terminal/ConsoleWindow" to="Ascii3D/ScreamerBaby" method="_on_console_window_screamer_baby_spawn"]
 [connection signal="ScreamerBabySpawn" from="Terminal/ConsoleWindow" to="AudioStreamPlayer" method="_on_console_window_screamer_baby_spawn"]
+[connection signal="ToggleConsoleVisibility" from="Terminal/ConsoleWindow" to="Terminal/ConsoleWindow" method="_on_toggle_console_visibility"]
+[connection signal="ToggleConsoleVisibility" from="Terminal/ConsoleWindow" to="AnimationPlayer" method="_on_console_window_toggle_console_visibility"]
+[connection signal="animation_finished" from="AnimationPlayer" to="AnimationPlayer" method="_on_animation_finished"]
