@@ -18,10 +18,10 @@ func _on_animation_finished(anim_name: StringName) -> void:
 	pass # Replace with function body.
 
 
-func _on_console_window_toggle_console_visibility(state : bool) -> void:
-	if state == false:
-		play("ConsoleClose")
-		await get_tree().create_timer(1).timeout;
-	else:
-		play("ConsoleOpen")
-		await get_tree().create_timer(1).timeout;
+#func _on_console_window_toggle_console_visibility(state : bool) -> void:
+	#if state == false:
+		#play("ConsoleClose")
+		#await get_tree().create_timer(1).timeout;
+	#else:
+		#play("ConsoleOpen")
+		#await get_tree().create_timer(1).timeout;

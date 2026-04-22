@@ -496,13 +496,13 @@ func _execute(cmd: String) -> void:
 		"exit", "quit":
 			_is_in_closing_state = true
 			ToggleConsoleVisibility.emit(false)
-			await get_tree().create_timer(1.0).timeout
+			#await get_tree().create_timer(1.0).timeout
 			_is_in_closing_state = false
 			visible = false
 
 		"baby":
 			ToggleConsoleVisibility.emit(false)
-			await get_tree().create_timer(1.0).timeout
+			#await get_tree().create_timer(1.0).timeout
 			visible = false
 			ScreamerBabySpawn.emit()
 			await get_tree().create_timer(3.0).timeout
@@ -632,6 +632,6 @@ func _history_navigate(direction: int) -> void:
 
 func _on_toggle_console_visibility(state: bool) -> void:
 	_is_in_closing_state = true
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(0.5).timeout
 	_is_in_closing_state = false
 	visible = state
